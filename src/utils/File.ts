@@ -35,7 +35,7 @@ const fileFactory = (file: File) => {
       get: () => {
         return {
           Bucket: self.bucket,
-          Key: self.name
+          Key: self.directories.join("/").replace("tmp/","")+"/"+self.name
         }
       }
     }

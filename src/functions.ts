@@ -12,33 +12,38 @@ import * as uuidv4 from 'uuid/v4'
 import * as chalk from 'chalk'
 
 export const zipRessource: any = (data: any) => {
+  // @ts-ignore
   return new Promise((resolve: any, reject: any) => {
     const s3: any = new aws.S3()
     const archive = archiver('zip', { store: true }).on('error', (err: any) => { reject(err) })
     archive.setMaxListeners(0)
-
     const output = data.outputZip
+    utils.log('ZIP FILES', chalk.default())
     const uploadStream = s3s(new aws.S3()).upload(output.s3.get())
-
+    utils.log('ZIP FILES 2', chalk.default())
     uploadStream.maxPartSize(config.maxPartSize)
     uploadStream.concurrentParts(config.concurrentParts)
-
+    utils.log('ZIP FILES 3', chalk.default())
     uploadStream
       .on('uploaded', (details) => resolve(data))
-
+    utils.log('ZIP FILES 4', chalk.default())
     pump(archive, uploadStream, (err: any) => {
       if (err) {
         reject(err)
       }
     })
-
+    utils.log('ZIP FILES 5', chalk.default())
     async.eachSeries(data.zipFiles, (zipFile, cb) => {
+      utils.log('ZIP FILES 6', chalk.default(JSON.stringify(zipFile)))
       let once = false;
       const parameters: any = zipFile.s3.get()
+      utils.log('ZIP FILES 7', chalk.default(JSON.stringify(parameters)))
       s3.headObject(parameters, (err: any, data: any) => {
         if (err) {
+          utils.log('ZIP FILES 8.1', chalk.default(JSON.stringify(err)))
           cb(err)
         } else {
+          utils.log('ZIP FILES 8.2', chalk.default())
           archive.append(s3.getObject(parameters).createReadStream(), { name: zipFile.name })
             .on('progress', (details) => {
               if (details.entries.total === details.entries.processed && once === false) {
@@ -58,6 +63,7 @@ export const zipRessource: any = (data: any) => {
 }
 
 export const parseRessource = (data: any) => {
+  // @ts-ignore
   return new Promise((resolve: any, reject: any) => {
     if (data.hasOwnProperty('event')) {
       const event = data.event
@@ -71,10 +77,10 @@ export const parseRessource = (data: any) => {
           }
           return file({ path: config.tempPath + '/' + item.Key, bucket: item.Bucket })
         })
-        utils.log('Your bucket source (files)', chalk.red(event.buckets.source))
+        utils.log('Your bucket source (files)', chalk.default(event.buckets.source))
         utils.log('Content of your zip', data.zipFiles.map(file => file.name))
-        utils.log('Your bucket destination (zip)', chalk.red(event.buckets.destination))
-        utils.log('Your zip filename', chalk.red(event.outputFilename))
+        utils.log('Your bucket destination (zip)', chalk.default(event.buckets.destination))
+        utils.log('Your zip filename', chalk.default(event.outputFilename))
         resolve(data)
       } else {
         reject({

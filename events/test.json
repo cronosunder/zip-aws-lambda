@@ -1,11 +1,11 @@
 {
   "buckets": {
-    "source": "images",
-    "destination": "images-zips"
+    "source": "febos-io",
+    "destination": "febos-io"
   },
   "Keys": [
-    "002080db-c1c8-4d13-bea9-395162c0ab1e.png",
-    "002080db-c1c8-4d13-bea9-395162c0ab1e.png"
+    "chile/test/0d11b0111c9361414d1a53d19292da78113b.cpsf.xml",
+    "chile/test/sobreENV_651731267_20190218_134842.xml"
   ],
-  "outputFilename": "zip-of-2images"
+  "outputFilename": "chile/test/xmls_test_flujo.xml"
 }
