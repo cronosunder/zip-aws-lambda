@@ -101,3 +101,9 @@ export const parseRessource = (data: any) => {
     }
   })
 }
+
+export const callbackFuncion: any = (event: any,ok: any,data: any) =>{
+  utils.log('CALLBACK EVENTO', chalk.default(JSON.stringify(event)))
+  utils.log('CALLBACK FINALIZO OK', chalk.default(ok))
+  utils.log('CALLBACK DATOS', chalk.default(JSON.stringify(data)))
+}

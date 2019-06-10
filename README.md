@@ -33,6 +33,8 @@ outputFilename **[string]** if not provided you'll get an uuid as filename
 `serverless invoke local -f zip -p events.test.json`
 
 ### Deploy lambda
+`serverless deploy`
+
 `serverless deploy -s STAGE_NAME`
 
 Note:
