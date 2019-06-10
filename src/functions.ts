@@ -1,6 +1,6 @@
-import { config } from './config'
+import {config} from './config'
 import * as utils from './utils/utils'
-import { file } from './utils/File'
+import {file} from './utils/File'
 
 import * as aws from 'aws-sdk'
 import * as _ from 'lodash'
@@ -15,36 +15,34 @@ export const zipRessource: any = (data: any) => {
   // @ts-ignore
   return new Promise((resolve: any, reject: any) => {
     const s3: any = new aws.S3()
-    const archive = archiver('zip', { store: true }).on('error', (err: any) => { reject(err) })
+    const archive = archiver('zip', {store: true}).on('error', (err: any) => {
+      reject(err)
+    })
     archive.setMaxListeners(0)
     const output = data.outputZip
-    utils.log('ZIP FILES', chalk.default())
     const uploadStream = s3s(new aws.S3()).upload(output.s3.get())
-    utils.log('ZIP FILES 2', chalk.default())
     uploadStream.maxPartSize(config.maxPartSize)
     uploadStream.concurrentParts(config.concurrentParts)
-    utils.log('ZIP FILES 3', chalk.default())
     uploadStream
       .on('uploaded', (details) => resolve(data))
-    utils.log('ZIP FILES 4', chalk.default())
     pump(archive, uploadStream, (err: any) => {
       if (err) {
         reject(err)
       }
     })
-    utils.log('ZIP FILES 5', chalk.default())
     async.eachSeries(data.zipFiles, (zipFile, cb) => {
-      utils.log('ZIP FILES 6', chalk.default(JSON.stringify(zipFile)))
       let once = false;
       const parameters: any = zipFile.s3.get()
-      utils.log('ZIP FILES 7', chalk.default(JSON.stringify(parameters)))
       s3.headObject(parameters, (err: any, data: any) => {
         if (err) {
-          utils.log('ZIP FILES 8.1', chalk.default(JSON.stringify(err)))
-          cb(err)
+          if (err.code == 'NotFound') {
+            utils.log('NO ENCONTRO EL ARCHIVO', chalk.default(JSON.stringify(parameters)))
+            cb()
+          } else {
+            cb(err)
+          }
         } else {
-          utils.log('ZIP FILES 8.2', chalk.default())
-          archive.append(s3.getObject(parameters).createReadStream(), { name: zipFile.name })
+          archive.append(s3.getObject(parameters).createReadStream(), {name: zipFile.name})
             .on('progress', (details) => {
               if (details.entries.total === details.entries.processed && once === false) {
                 once = true
@@ -58,6 +56,7 @@ export const zipRessource: any = (data: any) => {
         reject(err)
       }
       archive.finalize()
+      utils.log('FIN', chalk.default())
     })
   })
 }
@@ -69,13 +68,13 @@ export const parseRessource = (data: any) => {
       const event = data.event
       if (!_.isEmpty(event.buckets.source) && !_.isEmpty(event.buckets.destination) && !_.isEmpty(event.Keys)) {
         event.outputFilename = !_.isEmpty(event.outputFilename) ? event.outputFilename : uuidv4()
-        data.outputZip = file({ path: config.tempPath + '/' + event.outputFilename + '.' + config.extensions.zipOutput, bucket: event.buckets.destination })
+        data.outputZip = file({path: config.tempPath + '/' + event.outputFilename + '.' + config.extensions.zipOutput, bucket: event.buckets.destination})
         data['zipFiles'] = event.Keys.map((key) => {
           let item: any = {
             Bucket: event.buckets.source,
             Key: key
           }
-          return file({ path: config.tempPath + '/' + item.Key, bucket: item.Bucket })
+          return file({path: config.tempPath + '/' + item.Key, bucket: item.Bucket})
         })
         utils.log('Your bucket source (files)', chalk.default(event.buckets.source))
         utils.log('Content of your zip', data.zipFiles.map(file => file.name))
@@ -98,7 +97,7 @@ export const parseRessource = (data: any) => {
         })
       }
     } else {
-      reject({ err: 'Event is not provided' })
+      reject({err: 'Event is not provided'})
     }
   })
 }
