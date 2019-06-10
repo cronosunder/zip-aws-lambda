@@ -7,5 +7,13 @@
     "chile/test/0d11b0111c9361414d1a53d19292da78113b.cpsf.xml",
     "chile/test/sobreENV_651731267_20190218_1348422.xml"
   ],
-  "outputFilename": "chile/test/xmls_test_flujo.xml"
+  "outputFilename": "chile/test/xmls_test_flujo.xml",
+  "callback": {
+    "FunctionName": "dte_proyecto",
+    "InvocationType": "RequestResponse",
+    "LogType": "Tail",
+    "Payload": {
+      "campo": 1
+    }
+  }
 }

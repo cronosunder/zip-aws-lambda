@@ -102,8 +102,24 @@ export const parseRessource = (data: any) => {
   })
 }
 
-export const callbackFuncion: any = (event: any,ok: any,data: any) =>{
-  utils.log('CALLBACK EVENTO', chalk.default(JSON.stringify(event)))
-  utils.log('CALLBACK FINALIZO OK', chalk.default(ok))
-  utils.log('CALLBACK DATOS', chalk.default(JSON.stringify(data)))
+export const callbackFuncion: any = (context, event: any, ok: any, data: any) => {
+  utils.log('CALLBACK FINALIZO OK', chalk.default(ok));
+  if (!!event.callback) {
+    //utils.log('CALLBACK EVENTO', chalk.default(JSON.stringify(event)))
+    //utils.log('CALLBACK DATOS', chalk.default(JSON.stringify(data)))
+    var lambda = new aws.Lambda({apiVersion: '2015-03-31'});
+    var params = event.callback;
+    params.Payload.status = ok ? 'si' : 'no';
+    params.Payload = JSON.stringify(params.Payload);
+    utils.log('request', chalk.default(JSON.stringify(params)));
+    lambda.invoke(params, function (err, data) {
+      if (err) {
+        context.fail(err);
+      } else {
+        context.succeed('Lambda_B said ' + data.Payload);
+      }
+    })
+  } else {
+    utils.log('NO SE NOTIFICA', chalk.default(ok))
+  }
 }

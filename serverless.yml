@@ -18,12 +18,13 @@ provider:
     -  Effect: "Allow"
        Action:
           - "s3:*"
+          - "dynamodb:*"
+          - "lambda:*"
        Resource: "*"
-
-
+  role: arn:aws:iam::830321976775:role/lambda-vpc-execution-role
 functions:
   zip:
-    description: AWS Lambda to zip ressources as stream between S3 buckets
+    description: Comprime archivos en AWS S3 y notifica cuando finaliza
     handler: handler.zip
     timeout: 900
 package:
