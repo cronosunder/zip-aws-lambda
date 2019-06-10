@@ -37,7 +37,7 @@ outputFilename **[string]** if not provided you'll get an uuid as filename
 ### Deploy lambda
 `serverless deploy -s lambda`
 
-Se deja como nombre del deploy ``zip-aws-`` para que cuando deployemos con stage `lambda` el nombre final del stak sea *`zip-aws-lambda`*
+Se deja como nombre del deploy ``zip-aws`` para que cuando deployemos con stage `lambda` el nombre final del stak sea *`zip-aws-lambda`*
 Se creara el zip en la carpeta .serverless
 
 

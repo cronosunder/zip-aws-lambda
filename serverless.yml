@@ -1,4 +1,4 @@
-service: zip-aws-
+service: zip-aws
 
 custom:
   deployStage: ${opt:stage, self:provider.stage}
