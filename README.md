@@ -32,10 +32,14 @@ outputFilename **[string]** if not provided you'll get an uuid as filename
 ### Run lambda locally
 `serverless invoke local -f zip -p events.test.json`
 
+### Empaquetar lambda
+`serverless package`
 ### Deploy lambda
-`serverless deploy`
+`serverless deploy -s lambda`
 
-`serverless deploy -s STAGE_NAME`
+Se deja como nombre del deploy ``zip-aws-`` para que cuando deployemos con stage `lambda` el nombre final del stak sea *`zip-aws-lambda`*
+Se creara el zip en la carpeta .serverless
+
 
 Note:
 
