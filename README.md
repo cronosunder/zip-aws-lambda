@@ -30,7 +30,7 @@ Keys **string[]**: Array of filename (string) of each file you need to include i
 outputFilename **[string]** if not provided you'll get an uuid as filename
 
 ### Run lambda locally
-`serverless invoke local -f zip -p events.test.json`
+`serverless invoke local -f zip -p events/test.json`
 
 ### Empaquetar lambda
 `serverless package`
