@@ -30,6 +30,7 @@ export const zipRessource: any = (data: any) => {
         reject(err)
       }
     })
+
     async.eachSeries(data.zipFiles, (zipFile, cb) => {
       let once = false;
       const parameters: any = zipFile.s3.get()
@@ -64,8 +65,9 @@ export const zipRessource: any = (data: any) => {
 export const parseRessource = (data: any) => {
   // @ts-ignore
   return new Promise((resolve: any, reject: any) => {
-    if (data.hasOwnProperty('event')) {
-      const event = data.event
+    var procesarEvento = function (event) {
+
+      utils.log('EVENTO', chalk.default(JSON.stringify(event)));
       if (!_.isEmpty(event.buckets.source) && !_.isEmpty(event.buckets.destination) && !_.isEmpty(event.Keys)) {
         event.outputFilename = !_.isEmpty(event.outputFilename) ? event.outputFilename : uuidv4()
         data.outputZip = file({path: config.tempPath + '/' + event.outputFilename + '.' + config.extensions.zipOutput, bucket: event.buckets.destination})
@@ -77,7 +79,7 @@ export const parseRessource = (data: any) => {
           return file({path: config.tempPath + '/' + item.Key, bucket: item.Bucket})
         })
         utils.log('Your bucket source (files)', chalk.default(event.buckets.source))
-        utils.log('Content of your zip', data.zipFiles.map(file => file.name))
+        //utils.log('Content of your zip', data.zipFiles.map(file => file.name))
         utils.log('Your bucket destination (zip)', chalk.default(event.buckets.destination))
         utils.log('Your zip filename', chalk.default(event.outputFilename))
         resolve(data)
@@ -96,6 +98,44 @@ export const parseRessource = (data: any) => {
           provided: data.event
         })
       }
+    }
+    if (data.hasOwnProperty('event')) {
+      var event = data.event
+      if (!!data.event.s3Request) {
+        const s3: any = new aws.S3()
+        utils.log('EVENTO DESDE S3 : ', chalk.default(data.event.s3Request));
+        var partes = data.event.s3Request.split("/");
+        var bucket = partes[0];
+        var key = data.event.s3Request.replace("/"+bucket+"/","").replace(""+bucket+"/","");
+        var getParams = {
+          Bucket: bucket, //replace example bucket with your s3 bucket name
+          Key: key // replace file location with your s3 file location
+        }
+        s3.getObject(getParams, function (err, data) {
+          if (err) {
+            //console.error(err)
+            reject({
+              err: {
+                required: {
+                  "buckets": {
+                    "source": "",
+                    "destination": ""
+                  },
+                  "Keys": [],
+                  "outputFilename": "(optional)"
+                }
+              }
+            })
+          } else {
+            var req = data.Body.toString();
+            event = JSON.parse(req);
+            procesarEvento(event)
+          }
+        })
+      } else {
+        procesarEvento(event)
+      }
+
     } else {
       reject({err: 'Event is not provided'})
     }

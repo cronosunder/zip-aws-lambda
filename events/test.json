@@ -9,11 +9,19 @@
   ],
   "outputFilename": "chile/test/xmls_test_flujo.xml",
   "callback": {
-    "FunctionName": "dte_proyecto",
+    "FunctionName": "cl_dte",
     "InvocationType": "RequestResponse",
     "LogType": "Tail",
     "Payload": {
-      "campo": 1
+      "stage": "produccion",
+      "responseClass": "cl.febos.dte.acciones.masivo.dte.descargar.procesar.MasivoDteDescargarProcesarResponse",
+      "procesoId": "595cd2df112a414b2c1928b18a061f8bbaab",
+      "functionClass": "cl.febos.dte.acciones.masivo.dte.descargar.procesar.MasivoDteDescargarProcesarHandler",
+      "requestClass": "cl.febos.dte.acciones.masivo.dte.descargar.procesar.MasivoDteDescargarProcesarRequest",
+      "finalizado": "si",
+      "empresa": "76179952-5",
+      "pais": "cl",
+      "token": "M2E1Y2VjYjgxMDUwMDE0ZTQ4MTg5ZTgxZTA1NWJlNzY1ZGRk"
     }
   }
 }
