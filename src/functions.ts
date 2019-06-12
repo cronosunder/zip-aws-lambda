@@ -154,9 +154,11 @@ export const callbackFuncion: any = (context, event: any, ok: any, data: any) =>
     utils.log('request', chalk.default(JSON.stringify(params)));
     lambda.invoke(params, function (err, data) {
       if (err) {
+        utils.log('LLAMADA EJECUTADA ERROR',chalk.default(JSON.stringify(err)))
         context.fail(err);
       } else {
-        context.succeed('Lambda_B said ' + data.Payload);
+        utils.log('LLAMADA EJECUTADA ')
+        context.succeed("LLAMDA EJECUTADA");
       }
     })
   } else {
